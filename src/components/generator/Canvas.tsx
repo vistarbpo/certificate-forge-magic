@@ -3,10 +3,12 @@ import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ElementType } from "@/pages/Generator";
-import * as pdfjsLib from 'pdfjs-dist';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
-// Set the worker source
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Set up the worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 interface CanvasProps {
   pdfFile: File | null;
@@ -25,45 +27,24 @@ export const Canvas = ({
   setSelectedElement,
   updateElement
 }: CanvasProps) => {
-  const [pdfImageUrl, setPdfImageUrl] = useState<string>("");
   const [draggedElement, setDraggedElement] = useState<string | null>(null);
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const [pageNumber, setPageNumber] = useState<number>(1);
   const [isLoadingPdf, setIsLoadingPdf] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (pdfFile) {
-      renderPdfToImage(pdfFile);
-    } else {
-      setPdfImageUrl("");
-    }
-  }, [pdfFile]);
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setIsLoadingPdf(false);
+  };
 
-  const renderPdfToImage = async (file: File) => {
-    try {
-      setIsLoadingPdf(true);
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const page = await pdf.getPage(1); // Get first page
-      
-      const viewport = page.getViewport({ scale: 1.5 });
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
+  const onDocumentLoadStart = () => {
+    setIsLoadingPdf(true);
+  };
 
-      await page.render({
-        canvasContext: context,
-        viewport: viewport
-      }).promise;
-
-      const imageUrl = canvas.toDataURL('image/png');
-      setPdfImageUrl(imageUrl);
-    } catch (error) {
-      console.error('Error rendering PDF:', error);
-    } finally {
-      setIsLoadingPdf(false);
-    }
+  const onDocumentLoadError = (error: Error) => {
+    console.error('Error loading PDF:', error);
+    setIsLoadingPdf(false);
   };
 
   const handleElementMouseDown = (elementId: string, e: React.MouseEvent) => {
@@ -109,16 +90,30 @@ export const Canvas = ({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onClick={handleCanvasClick}
-        style={{
-          backgroundImage: pdfImageUrl ? `url(${pdfImageUrl})` : undefined,
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center'
-        }}
       >
+        {/* PDF Document */}
+        {pdfFile && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Document
+              file={pdfFile}
+              onLoadStart={onDocumentLoadStart}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={onDocumentLoadError}
+              className="flex items-center justify-center"
+            >
+              <Page
+                pageNumber={pageNumber}
+                className="max-w-full max-h-full"
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+              />
+            </Document>
+          </div>
+        )}
+
         {/* Loading indicator for PDF */}
         {isLoadingPdf && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/90">
+          <div className="absolute inset-0 flex items-center justify-center bg-white/90 z-10">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
               <p className="text-sm text-slate-600">Loading PDF...</p>
@@ -130,7 +125,7 @@ export const Canvas = ({
         {elements.filter(el => el.type === 'text').map((element) => (
           <div
             key={element.id}
-            className={`absolute cursor-move select-none px-2 py-1 rounded transition-all ${
+            className={`absolute cursor-move select-none px-2 py-1 rounded transition-all z-20 ${
               selectedElement === element.id 
                 ? 'ring-2 ring-blue-500 bg-blue-50/80' 
                 : 'hover:bg-slate-100/80'
@@ -153,7 +148,7 @@ export const Canvas = ({
         {elements.filter(el => el.type === 'signature' || el.type === 'seal').map((element) => (
           <div
             key={element.id}
-            className={`absolute cursor-move rounded transition-all ${
+            className={`absolute cursor-move rounded transition-all z-20 ${
               selectedElement === element.id 
                 ? 'ring-2 ring-blue-500 bg-blue-50/30' 
                 : 'hover:bg-slate-100/30'
@@ -190,7 +185,7 @@ export const Canvas = ({
         )}
 
         {pdfFile && elements.length === 0 && !isLoadingPdf && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
             <div className="text-center text-slate-400 bg-white/90 p-6 rounded-lg">
               <p className="text-lg font-medium">Start Adding Elements</p>
               <p className="text-sm">Add data fields and images from the sidebar</p>
@@ -200,7 +195,7 @@ export const Canvas = ({
 
         {/* Selection Indicator */}
         {selectedElement && (
-          <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium">
+          <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium z-30">
             {elements.find(el => el.id === selectedElement)?.type === 'text' 
               ? `Text: ${elements.find(el => el.id === selectedElement)?.column}`
               : `Image: ${elements.find(el => el.id === selectedElement)?.type}`
