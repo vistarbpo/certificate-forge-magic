@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -368,7 +367,7 @@ export const Sidebar = ({
                     ? 'bg-blue-50 border-blue-200' 
                     : 'hover:bg-slate-50'
                 }`}
-                onClick={() => updateElement === selectedElement ? null : updateElement}
+                onClick={() => updateElement(element.id, {})}
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium truncate">
