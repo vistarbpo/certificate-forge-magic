@@ -3,6 +3,10 @@ import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ElementType } from "@/pages/Generator";
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Set the worker source
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface CanvasProps {
   pdfFile: File | null;
@@ -21,17 +25,46 @@ export const Canvas = ({
   setSelectedElement,
   updateElement
 }: CanvasProps) => {
-  const [pdfUrl, setPdfUrl] = useState<string>("");
+  const [pdfImageUrl, setPdfImageUrl] = useState<string>("");
   const [draggedElement, setDraggedElement] = useState<string | null>(null);
+  const [isLoadingPdf, setIsLoadingPdf] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (pdfFile) {
-      const url = URL.createObjectURL(pdfFile);
-      setPdfUrl(url);
-      return () => URL.revokeObjectURL(url);
+      renderPdfToImage(pdfFile);
+    } else {
+      setPdfImageUrl("");
     }
   }, [pdfFile]);
+
+  const renderPdfToImage = async (file: File) => {
+    try {
+      setIsLoadingPdf(true);
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1); // Get first page
+      
+      const viewport = page.getViewport({ scale: 1.5 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      await page.render({
+        canvasContext: context,
+        viewport: viewport
+      }).promise;
+
+      const imageUrl = canvas.toDataURL('image/png');
+      setPdfImageUrl(imageUrl);
+    } catch (error) {
+      console.error('Error rendering PDF:', error);
+    } finally {
+      setIsLoadingPdf(false);
+    }
+  };
 
   const handleElementMouseDown = (elementId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -77,12 +110,22 @@ export const Canvas = ({
         onMouseUp={handleMouseUp}
         onClick={handleCanvasClick}
         style={{
-          backgroundImage: pdfUrl ? `url(${pdfUrl})` : undefined,
+          backgroundImage: pdfImageUrl ? `url(${pdfImageUrl})` : undefined,
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center'
         }}
       >
+        {/* Loading indicator for PDF */}
+        {isLoadingPdf && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/90">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+              <p className="text-sm text-slate-600">Loading PDF...</p>
+            </div>
+          </div>
+        )}
+
         {/* Text Elements */}
         {elements.filter(el => el.type === 'text').map((element) => (
           <div
@@ -146,7 +189,7 @@ export const Canvas = ({
           </div>
         )}
 
-        {pdfFile && elements.length === 0 && (
+        {pdfFile && elements.length === 0 && !isLoadingPdf && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center text-slate-400 bg-white/90 p-6 rounded-lg">
               <p className="text-lg font-medium">Start Adding Elements</p>
