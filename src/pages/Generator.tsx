@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -26,7 +25,7 @@ const Generator = () => {
     { id: "generate", title: "Generate", icon: Download }
   ];
 
-  const canProceedToMapping = pdfFile && excelFile;
+  const canProceedToMapping = !!(pdfFile && excelFile);
   const canProceedToEditor = excelData.length > 0;
 
   return (

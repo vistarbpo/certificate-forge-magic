@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -43,7 +42,7 @@ export const DataMapping = ({
       const workbook = XLSX.read(arrayBuffer, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
       
       if (jsonData.length === 0) {
         toast({
@@ -55,11 +54,11 @@ export const DataMapping = ({
       }
 
       const headers = jsonData[0] as string[];
-      const dataRows = jsonData.slice(1).filter(row => row.some(cell => cell !== undefined && cell !== ""));
+      const dataRows = jsonData.slice(1).filter((row: any[]) => row.some((cell: any) => cell !== undefined && cell !== ""));
       
       setColumns(headers);
       setPreviewData(dataRows.slice(0, 5)); // Show first 5 rows for preview
-      setExcelData(dataRows.map(row => {
+      setExcelData(dataRows.map((row: any[]) => {
         const obj: any = {};
         headers.forEach((header, index) => {
           obj[header] = row[index] || "";
