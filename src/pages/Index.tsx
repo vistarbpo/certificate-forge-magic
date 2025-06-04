@@ -8,16 +8,16 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Navigation */}
-      <nav className="flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-slate-200 animate-fade-in">
-        <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+      <nav className="flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           CertGen Pro
         </div>
         <div className="flex items-center gap-6">
-          <Link to="/pricing" className="text-slate-600 hover:text-slate-900 transition-colors duration-200 hover:scale-105 transform">
+          <Link to="/pricing" className="text-slate-600 hover:text-slate-900 transition-colors">
             Pricing
           </Link>
-          <Button variant="outline" className="border-slate-300 hover:scale-105 transition-all duration-200">Sign In</Button>
-          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
+          <Button variant="outline" className="border-slate-300">Sign In</Button>
+          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
             Get Started
           </Button>
         </div>
@@ -26,67 +26,63 @@ const Index = () => {
       {/* Hero Section */}
       <div className="container mx-auto px-6 py-20">
         <div className="text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in hover:scale-105 transition-all duration-300 hover:bg-blue-100">
-            <Check className="h-4 w-4 animate-pulse" />
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
+            <Check className="h-4 w-4" />
             Trusted by 10,000+ organizations
           </div>
           
-          <h1 className="text-6xl font-bold text-slate-900 mb-6 leading-tight">
-            <span className="inline-block animate-fade-in [animation-delay:200ms] opacity-0 [animation-fill-mode:forwards]">
-              Generate thousands of
-            </span>
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block animate-fade-in [animation-delay:400ms] opacity-0 [animation-fill-mode:forwards] hover:scale-105 transition-transform duration-300">
+          <h1 className="text-6xl font-bold text-slate-900 mb-6 leading-tight animate-fade-in">
+            Generate thousands of
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
               professional certificates
             </span>
-            <span className="inline-block animate-fade-in [animation-delay:600ms] opacity-0 [animation-fill-mode:forwards]">
-              in minutes
-            </span>
+            in minutes
           </h1>
           
-          <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto animate-fade-in [animation-delay:800ms] opacity-0 [animation-fill-mode:forwards]">
+          <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto animate-fade-in">
             Upload your template, import your data, customize positioning with our intuitive editor, 
             and generate beautiful certificates for all your participants instantly.
           </p>
           
-          <div className="flex items-center justify-center gap-4 mb-12 animate-fade-in [animation-delay:1000ms] opacity-0 [animation-fill-mode:forwards]">
+          <div className="flex items-center justify-center gap-4 mb-12 animate-fade-in">
             <Link to="/generator">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 h-auto hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl group">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 h-auto">
                 Start Creating Certificates
-                <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform duration-200" />
+                <ArrowDown className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-4 h-auto border-slate-300 hover:scale-105 transition-all duration-200 hover:shadow-lg">
+            <Button variant="outline" size="lg" className="text-lg px-8 py-4 h-auto border-slate-300">
               Watch Demo
             </Button>
           </div>
           
           {/* Feature Preview Cards */}
           <div className="grid md:grid-cols-3 gap-6 mt-16">
-            <Card className="p-6 bg-white/60 backdrop-blur-sm border-slate-200 hover:shadow-lg transition-all duration-300 group animate-fade-in [animation-delay:1200ms] opacity-0 [animation-fill-mode:forwards] hover:scale-105 hover:-translate-y-2">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
+            <Card className="p-6 bg-white/60 backdrop-blur-sm border-slate-200 hover:shadow-lg transition-all duration-300 group">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Upload className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors duration-200">Easy Upload</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">Easy Upload</h3>
               <p className="text-slate-600">
                 Simply upload your PDF certificate template and Excel data file to get started.
               </p>
             </Card>
             
-            <Card className="p-6 bg-white/60 backdrop-blur-sm border-slate-200 hover:shadow-lg transition-all duration-300 group animate-fade-in [animation-delay:1400ms] opacity-0 [animation-fill-mode:forwards] hover:scale-105 hover:-translate-y-2">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
+            <Card className="p-6 bg-white/60 backdrop-blur-sm border-slate-200 hover:shadow-lg transition-all duration-300 group">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <FileText className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2 group-hover:text-purple-600 transition-colors duration-200">Visual Editor</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">Visual Editor</h3>
               <p className="text-slate-600">
                 Drag, drop, and position text fields, signatures, and seals with pixel-perfect precision.
               </p>
             </Card>
             
-            <Card className="p-6 bg-white/60 backdrop-blur-sm border-slate-200 hover:shadow-lg transition-all duration-300 group animate-fade-in [animation-delay:1600ms] opacity-0 [animation-fill-mode:forwards] hover:scale-105 hover:-translate-y-2">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
+            <Card className="p-6 bg-white/60 backdrop-blur-sm border-slate-200 hover:shadow-lg transition-all duration-300 group">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Download className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2 group-hover:text-green-600 transition-colors duration-200">Bulk Download</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">Bulk Download</h3>
               <p className="text-slate-600">
                 Generate and download individual certificates or get them all in a compressed folder.
               </p>
